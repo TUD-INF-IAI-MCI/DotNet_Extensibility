@@ -26,7 +26,7 @@ namespace tud.mci.extensibility
         /// </summary>
         /// <param name="t">The Type to search for.</param>
         /// <param name="baseDirectory">The base directory.</param>
-        /// <param name="prefix">The prefix added to the dictory anme (normally the parents fdircetorie key).</param>
+        /// <param name="prefix">The prefix added to the directory name (normally the parents directory key).</param>
         /// <returns>
         /// Dictionary of key [EXT_(subfoldername)] and list of available class types
         /// </returns>
@@ -76,7 +76,7 @@ namespace tud.mci.extensibility
         /// Search the dll (assemblies) and return them.
         /// </summary>
         /// <param name="t">The Type to search for.</param>
-        /// <param name="searchPath">The directory to serach in.</param>
+        /// <param name="searchPath">The directory to search in.</param>
         /// <returns>list of available types</returns>
         public static List<Type> LoadTypes(Type t, string searchPath)
         {
@@ -144,12 +144,6 @@ namespace tud.mci.extensibility
                 try
                 {
                     return Activator.CreateInstance(t);
-
-
-
-
-                    //return AppDomain.CurrentDomain.CreateInstance(t.Assembly.FullName,t.FullName);
-
                 }
                 catch (Exception)
                 { }
