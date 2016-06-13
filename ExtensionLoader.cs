@@ -64,8 +64,7 @@ namespace tud.mci.extensibility
                                 }
                             }
                         }
-                        catch(Exception ex)
-                        {}
+                        catch(Exception){}
                     }
                 }
             }
@@ -98,11 +97,11 @@ namespace tud.mci.extensibility
                         }
                     }
                 }
-                catch (BadImageFormatException e)
+                catch (BadImageFormatException)
                 {
                     // Not a valid assembly, move on
                 }
-                catch (Exception e) { }
+                catch (Exception) { }
             }
 
             // Used to tell Main how many types we loaded
