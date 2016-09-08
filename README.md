@@ -1,4 +1,4 @@
-DotNet_Extensibility
+﻿DotNet_Extensibility
 =========
 
 ## Intension:
@@ -7,33 +7,72 @@ Copy a compiled extension dll to a specific folder. The application to extend wi
 
 ## How to use:
 
+You only have to ask the ExtensionLoader for all available objects of a certain type in a certain directory ... that’s it
+
 ### How to build an extension
-1. Embed tud.mci.tangram.TangramLector.Extension
-2. Extension object must be an AbstractSpecializedFunctionProxyBase (tud.mci.tangram.TangramLector.SpecializedFunctionProxies)
-3. the constructor must be without parameters
 
 #### ATTENTION: 
 Don’t let the compiler add local copies of resources of your extension that will be sent to the extension by the framework. This will lead to problems in checking the wright object types in initialization function.
 
+#### ATTENTION: 
+If you only use the compiled dll of this project, make sure you disable the option for including interop-types. This project does not provide an interface!
 
---	TODO: build a small workflow
+If you build extension in independent projects, make sure you copy them after compilation to the extension directory the main application is looking for. So the extension project should include his folders into the output directory via xcopy.
 
-Using Project should include the folders into the output directory via xcopy
-
-So add the xcopy as "post build process"
+E.g., add the xcopy as "post build process"
 
 XCOPY "$(SolutionDir)EXT" "$(TargetDir)Extensions" /H /S /Y /C /I /Q /R
 
 
 ### Example
 
---	TODO: build a small example
 
+Include namespace 
 
+``` C#
+using tud.mci.extensibility;
+```
 
-## You want to know more?
+Define an extension directory to look for extensions to load
 
---	TODO: build help from code doc
+``` C#
+const string EXTENSION_DIR = @"./Ext";
+```
 
-For getting a very detailed overview use the [code documentaion section](/Help/index.html) of this project.
+Load all extensions in the subdirectories
 
+``` C#
+private List<Type> LoadExtension()
+{
+    var extTypes = new List<Type>();
+    var dir = new DirectoryInfo(EXTENSION_DIR);
+
+    if (dir.Exists)
+    {
+        var dirs = dir.GetDirectories();
+        // check every subdirectory
+        foreach (var directoryInfo in dirs)
+        {
+            // let the Extension loader fetch all dlls (classes) that implement a certain type or interface
+            // in this example the type to search for is FooBar
+
+            var extension = ExtensionLoader.LoadAllExtensions(typeof(FooBarClass), directoryInfo.FullName).SelectMany(x => x.Value);
+            extTypes.AddRange(extension);
+        }
+    }
+
+    // now we can instantiate the single identified extension classes
+    foreach (var extType in extTypes)
+    {
+        try
+        {
+            // you can also add constructor parameters such as the example object someConstrParam
+            var adapter = Activator.CreateInstance(extType, someConstrParam);
+            // TODO: do whatever you want with your loaded and instantiated Object
+        }
+        catch (Exception e) { }
+    }
+
+    return extTypes;
+}
+```
